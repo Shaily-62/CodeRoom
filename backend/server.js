@@ -21,7 +21,6 @@ const ySocketIO = new YSocketIO(io); // Create a YSocketIO instance using the So
 ySocketIO.initialize()       // Initialize the YSocketIO instance to set up the necessary event listeners and handlers for real-time collaboration
 
 
-
 //health check route
 app.get('/',(req,res)=>{
     res.status(200).json({message:'hello world', success:true})
