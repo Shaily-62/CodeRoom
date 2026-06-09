@@ -22,7 +22,15 @@ function App() {
 
 
     const handleMount = (editor) => {
+
         editorRef.current = editor;// This function is called when the Monaco Editor is mounted and initialized. It takes the editor instance as an argument and assigns it to the editorRef.current property, allowing us to access the editor instance later for setting up the real-time collaboration bindings. 
+        const monacoBinding = new MonacoBinding(
+            yText,
+            editorRef.current.getModel(),
+            new Set([editorRef.current]),
+            provider.awareness
+        )
+
     }
 
     const handleJoin = (e) => {
@@ -34,14 +42,18 @@ function App() {
 
 
     useEffect(() => {
-        if (userName && editorRef.current) {
+        if (userName) {
             const provider = new SocketIOProvider('http://localhost:3000', 'monaco', ydoc, { autoConnect: true }); // Create a new SocketIOProvider instance to connect to the Socket.IO server at the specified URL and room name, and pass the Y.Doc instance for synchronization. This provider will handle the communication between the client and the server for real-time collaboration.
 
             provider.awareness.setLocalStateField("user", { userName });
 
             provider.awareness.on("change", () => {
                 const states = Array.from(provider.awareness.getStates().values());
-                setUsers(states.filter(state => user && user.userName).map(state => state.user));
+                setUsers(
+                    states
+                        .filter(state => state.user && state.user.userName)
+                        .map(state => state.user)
+                );
             })
 
             function handleBeforeUnload() {
@@ -50,21 +62,13 @@ function App() {
 
             window.addEventListener("beforeunload", handleBeforeUnload);
 
-            const monacoBinding = new MonacoBinding(
-                yText,
-                editorRef.current.getModel(),
-                new Set([editorRef.current]),
-                provider.awareness
-            )
-
             return () => {
-                monacoBinding.destroy();
-                provider.disconnect();//
+                provider.disconnect();
                 window.removeEventListener("beforeunload", handleBeforeUnload);
             }
 
         }
-    }, [editorRef, userName])
+    }, [userName])
 
 
     if (!userName) {
