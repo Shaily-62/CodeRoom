@@ -4,7 +4,12 @@ import { Server } from "socket.io"                     // Import the Server clas
 import { YSocketIO } from 'y-socket.io/dist/server'    // Import YSocketIO for real-time collaboration
 import cors from 'cors'
 
-const app = express();       
+const app = express();
+
+app.use(express.json())  // Middleware to parse JSON request bodies
+app.use(express.static('public')) // Serve static files from the 'public' directory
+app.use(express.urlencoded({ extended: true })) // Middleware to parse URL-encoded request bodies
+
 const port = 3000;
 app.use(cors());
 
@@ -22,16 +27,13 @@ ySocketIO.initialize()       // Initialize the YSocketIO instance to set up the 
 
 
 //health check route
-app.get('/',(req,res)=>{
-    res.status(200).json({message:'hello world', success:true})
-})
 
-app.get('/health',(req,res)=>{
-    res.status(200).json({message:'Server is healthy', success:true})
+app.get('/health', (req, res) => {
+    res.status(200).json({ message: 'Server is healthy', success: true })
 })
 
 
 //server setup
-httpServer.listen(port, () => {     
+httpServer.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });

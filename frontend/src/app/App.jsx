@@ -28,7 +28,7 @@ function App() {
             yText,
             editorRef.current.getModel(),
             new Set([editorRef.current]),
-            provider.awareness
+            // provider.awareness
         )
 
     }
@@ -43,7 +43,7 @@ function App() {
 
     useEffect(() => {
         if (userName) {
-            const provider = new SocketIOProvider('http://localhost:3000', 'monaco', ydoc, { autoConnect: true }); // Create a new SocketIOProvider instance to connect to the Socket.IO server at the specified URL and room name, and pass the Y.Doc instance for synchronization. This provider will handle the communication between the client and the server for real-time collaboration.
+            const provider = new SocketIOProvider('/', 'monaco', ydoc, { autoConnect: true }); // Create a new SocketIOProvider instance to connect to the Socket.IO server at the specified URL and room name, and pass the Y.Doc instance for synchronization. This provider will handle the communication between the client and the server for real-time collaboration.
 
             provider.awareness.setLocalStateField("user", { userName });
 
